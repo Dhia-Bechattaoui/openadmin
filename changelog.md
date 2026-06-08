@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2026-06-08
+### Added
+- Implemented Rust backend database operations for items (`insert_item`, `get_items`).
+- Exposed SQLite operations as Tauri Commands to the React frontend.
+
 ## [0.0.4] - 2026-06-08
 ### Added
 - Configured embedded SQLite database (`rusqlite`) in the Rust backend with automated initialization.
@@ -28,7 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.1...v0.0.2
