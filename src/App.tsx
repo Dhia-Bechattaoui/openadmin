@@ -161,8 +161,18 @@ function App() {
       <main className="main-content glass-panel">
         <header className="header">
           <div>
-            <h1>Life Ops Overview</h1>
-            <p>Your local-first command center.</p>
+            <h1>
+              {activeTab === 'dashboard' && 'Life Ops Overview'}
+              {activeTab === 'warranties' && 'Warranties'}
+              {activeTab === 'subscriptions' && 'Subscriptions'}
+              {activeTab === 'settings' && 'Settings'}
+            </h1>
+            <p>
+              {activeTab === 'dashboard' && 'Your local-first command center.'}
+              {activeTab === 'warranties' && 'Track and manage your product warranties.'}
+              {activeTab === 'subscriptions' && 'Keep an eye on your recurring costs.'}
+              {activeTab === 'settings' && 'Configure your OpenAdmin preferences.'}
+            </p>
           </div>
           
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -176,33 +186,50 @@ function App() {
           </div>
         </header>
 
-        {/* Dashboard Grid */}
-        <div className="dashboard-grid">
-          {items.map(item => (
-            <div className="card glass-panel" key={item.id}>
-              <div className="card-header">
-                <h3>{item.title}</h3>
-                <div className="card-icon" style={{ 
-                  color: item.category === 'warranty' ? '#10b981' : 
-                         item.category === 'subscription' ? '#6366f1' : '#f59e0b' 
-                }}>
-                  {item.category === 'warranty' && <Receipt size={24} />}
-                  {item.category === 'subscription' && <CreditCard size={24} />}
-                  {item.category === 'document' && <ShieldCheck size={24} />}
+        {/* Main Content Render */}
+        {activeTab !== 'settings' ? (
+          <div className="dashboard-grid">
+            {items
+              .filter(item => {
+                if (activeTab === 'warranties') return item.category === 'warranty';
+                if (activeTab === 'subscriptions') return item.category === 'subscription';
+                return true; // Dashboard shows all
+              })
+              .map(item => (
+                <div className="card glass-panel" key={item.id}>
+                  <div className="card-header">
+                    <h3>{item.title}</h3>
+                    <div className="card-icon" style={{ 
+                      color: item.category === 'warranty' ? '#10b981' : 
+                             item.category === 'subscription' ? '#6366f1' : '#f59e0b' 
+                    }}>
+                      {item.category === 'warranty' && <Receipt size={24} />}
+                      {item.category === 'subscription' && <CreditCard size={24} />}
+                      {item.category === 'document' && <ShieldCheck size={24} />}
+                    </div>
+                  </div>
+                  {item.cost && <h1 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>${item.cost.toFixed(2)}</h1>}
+                  {item.expiration_date && <p>Expires: {item.expiration_date}</p>}
+                  {item.notes && <p style={{fontSize: '0.875rem', opacity: 0.7, marginTop: 'auto'}}>{item.notes.substring(0, 50)}{item.notes.length > 50 ? '...' : ''}</p>}
                 </div>
-              </div>
-              {item.cost && <h1 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>${item.cost.toFixed(2)}</h1>}
-              {item.expiration_date && <p>Expires: {item.expiration_date}</p>}
-              {item.notes && <p style={{fontSize: '0.875rem', opacity: 0.7, marginTop: 'auto'}}>{item.notes.substring(0, 50)}{item.notes.length > 50 ? '...' : ''}</p>}
-            </div>
-          ))}
-          
-          {items.length === 0 && (
-            <p style={{ gridColumn: '1 / -1', textAlign: 'center', opacity: 0.5, marginTop: '4rem' }}>
-              No items yet. Click "Add Item" to get started!
-            </p>
-          )}
-        </div>
+            ))}
+            
+            {items.filter(item => {
+              if (activeTab === 'warranties') return item.category === 'warranty';
+              if (activeTab === 'subscriptions') return item.category === 'subscription';
+              return true;
+            }).length === 0 && (
+              <p style={{ gridColumn: '1 / -1', textAlign: 'center', opacity: 0.5, marginTop: '4rem' }}>
+                No items found here. Click "Add Item" to get started!
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="settings-panel glass-panel" style={{ padding: '2rem', marginTop: '2rem', borderRadius: '16px' }}>
+            <h2>Preferences</h2>
+            <p style={{ opacity: 0.7, marginTop: '1rem' }}>Settings configuration coming soon...</p>
+          </div>
+        )}
       </main>
 
       {/* Add Item Modal */}

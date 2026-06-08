@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-06-08
+### Fixed
+- Fixed bug where side menu navigation did not conditionally render main dashboard content.
+- Implemented category filtering for the Warranties and Subscriptions tabs.
+- Added dynamic headers based on the active tab context.
+
 ## [0.1.0] - 2026-06-08
 ### Added
 - Created a background Rust worker thread to periodically check the SQLite database for expiring warranties and subscriptions.
@@ -49,7 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.7...v0.1.0
 [0.0.7]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.5...v0.0.6
