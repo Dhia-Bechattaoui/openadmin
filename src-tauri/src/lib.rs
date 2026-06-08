@@ -19,6 +19,18 @@ fn get_items(state: State<AppState>) -> Result<Vec<Item>, String> {
     db::get_items(&conn).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn update_item(state: State<AppState>, item: Item) -> Result<(), String> {
+    let conn = state.db_conn.lock().unwrap();
+    db::update_item(&conn, item).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn delete_item(state: State<AppState>, id: i32) -> Result<(), String> {
+    let conn = state.db_conn.lock().unwrap();
+    db::delete_item(&conn, id).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -67,7 +79,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![insert_item, get_items])
+        .invoke_handler(tauri::generate_handler![insert_item, get_items, update_item, delete_item])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

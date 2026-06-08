@@ -189,6 +189,35 @@ p {
   justify-content: center;
 }
 
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover .card-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: var(--glass-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

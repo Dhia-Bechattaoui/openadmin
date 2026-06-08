@@ -71,3 +71,16 @@ pub fn get_items(conn: &Connection) -> Result<Vec<Item>> {
     
     Ok(items)
 }
+
+pub fn update_item(conn: &Connection, item: Item) -> Result<()> {
+    conn.execute(
+        "UPDATE items SET title = ?1, category = ?2, expiration_date = ?3, cost = ?4, notes = ?5 WHERE id = ?6",
+        rusqlite::params![item.title, item.category, item.expiration_date, item.cost, item.notes, item.id],
+    )?;
+    Ok(())
+}
+
+pub fn delete_item(conn: &Connection, id: i32) -> Result<()> {
+    conn.execute("DELETE FROM items WHERE id = ?1", rusqlite::params![id])?;
+    Ok(())
+}

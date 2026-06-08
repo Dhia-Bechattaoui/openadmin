@@ -9,7 +9,9 @@ import {
   Bell,
   Fingerprint,
   X,
-  UploadCloud
+  UploadCloud,
+  Pencil,
+  Trash
 } from "lucide-react";
 import Tesseract from "tesseract.js";
 import "./App.css";
@@ -27,6 +29,7 @@ interface Item {
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [items, setItems] = useState<Item[]>([]);
 
   // Form State
@@ -88,6 +91,36 @@ function App() {
     }
   };
 
+  const handleEdit = (item: Item) => {
+    if (item.id === undefined) return;
+    setEditingItemId(item.id);
+    setTitle(item.title);
+    setCategory(item.category);
+    setCost(item.cost ? item.cost.toString() : "");
+    setExpirationDate(item.expiration_date || "");
+    setNotes(item.notes || "");
+    setIsAddModalOpen(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this item?")) return;
+    try {
+      await invoke("delete_item", { id });
+      fetchItems();
+    } catch (e) {
+      console.error("Failed to delete item:", e);
+    }
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setCost("");
+    setExpirationDate("");
+    setNotes("");
+    setEditingItemId(null);
+    setIsAddModalOpen(false);
+  };
+
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -101,14 +134,13 @@ function App() {
         notes: notes || null
       };
 
-      await invoke("insert_item", { item: newItem });
+      if (editingItemId) {
+        await invoke("update_item", { item: { ...newItem, id: editingItemId } });
+      } else {
+        await invoke("insert_item", { item: newItem });
+      }
       
-      setTitle("");
-      setCost("");
-      setExpirationDate("");
-      setNotes("");
-      setIsAddModalOpen(false);
-      
+      resetForm();
       fetchItems();
     } catch (e) {
       console.error("Failed to save item:", e);
@@ -179,7 +211,7 @@ function App() {
             <button className="nav-item" style={{ padding: '0.75rem', borderRadius: '50%' }}>
               <Bell size={20} />
             </button>
-            <button className="btn-primary" onClick={() => setIsAddModalOpen(true)}>
+            <button className="btn-primary" onClick={() => { resetForm(); setIsAddModalOpen(true); }}>
               <Plus size={20} />
               Add Item
             </button>
@@ -199,13 +231,23 @@ function App() {
                 <div className="card glass-panel" key={item.id}>
                   <div className="card-header">
                     <h3>{item.title}</h3>
-                    <div className="card-icon" style={{ 
-                      color: item.category === 'warranty' ? '#10b981' : 
-                             item.category === 'subscription' ? '#6366f1' : '#f59e0b' 
-                    }}>
-                      {item.category === 'warranty' && <Receipt size={24} />}
-                      {item.category === 'subscription' && <CreditCard size={24} />}
-                      {item.category === 'document' && <ShieldCheck size={24} />}
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <div className="card-actions">
+                        <button className="action-btn" onClick={() => handleEdit(item)}>
+                          <Pencil size={16} />
+                        </button>
+                        <button className="action-btn" style={{ color: '#ef4444' }} onClick={() => item.id && handleDelete(item.id)}>
+                          <Trash size={16} />
+                        </button>
+                      </div>
+                      <div className="card-icon" style={{ 
+                        color: item.category === 'warranty' ? '#10b981' : 
+                               item.category === 'subscription' ? '#6366f1' : '#f59e0b' 
+                      }}>
+                        {item.category === 'warranty' && <Receipt size={24} />}
+                        {item.category === 'subscription' && <CreditCard size={24} />}
+                        {item.category === 'document' && <ShieldCheck size={24} />}
+                      </div>
                     </div>
                   </div>
                   {item.cost && <h1 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>${item.cost.toFixed(2)}</h1>}
@@ -232,13 +274,13 @@ function App() {
         )}
       </main>
 
-      {/* Add Item Modal */}
+      {/* Add/Edit Item Modal */}
       {isAddModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsAddModalOpen(false)}>
+        <div className="modal-overlay" onClick={resetForm}>
           <div className="modal-content glass-panel" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Add New Item</h2>
-              <button className="icon-btn" onClick={() => setIsAddModalOpen(false)}>
+              <h2>{editingItemId ? "Edit Item" : "Add New Item"}</h2>
+              <button className="icon-btn" onClick={resetForm}>
                 <X size={24} />
               </button>
             </div>
@@ -325,8 +367,8 @@ function App() {
                 </div>
 
                 <div className="form-actions">
-                  <button type="button" className="btn-secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
-                  <button type="submit" className="btn-primary">Save Item</button>
+                  <button type="button" className="btn-secondary" onClick={resetForm}>Cancel</button>
+                  <button type="submit" className="btn-primary">{editingItemId ? "Save Changes" : "Save Item"}</button>
                 </div>
               </form>
             )}
