@@ -103,7 +103,6 @@ function App() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this item?")) return;
     try {
       await invoke("delete_item", { id });
       fetchItems();
