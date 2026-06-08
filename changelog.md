@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-06-08
+### Added
+- Configured embedded SQLite database (`rusqlite`) in the Rust backend with automated initialization.
+- Built responsive "Add Item" React modal interface for data entry.
+
 ## [0.0.3] - 2026-06-08
 ### Added
 - Implemented premium Dark Mode Glassmorphism UI shell (Vanilla CSS).
@@ -23,7 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/dhia-bechattaoui/openadmin/releases/tag/v0.0.1

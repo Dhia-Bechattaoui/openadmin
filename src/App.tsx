@@ -7,12 +7,14 @@ import {
   Settings, 
   Plus,
   Bell,
-  Fingerprint
+  Fingerprint,
+  X
 } from "lucide-react";
 import "./App.css";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
     <div className="app-container">
@@ -68,14 +70,14 @@ function App() {
             <button className="nav-item" style={{ padding: '0.75rem', borderRadius: '50%' }}>
               <Bell size={20} />
             </button>
-            <button className="btn-primary">
+            <button className="btn-primary" onClick={() => setIsAddModalOpen(true)}>
               <Plus size={20} />
               Add Item
             </button>
           </div>
         </header>
 
-        {/* Placeholder Dashboard Grid */}
+        {/* Dashboard Grid */}
         <div className="dashboard-grid">
           <div className="card glass-panel">
             <div className="card-header">
@@ -111,6 +113,57 @@ function App() {
           </div>
         </div>
       </main>
+
+      {/* Add Item Modal */}
+      {isAddModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsAddModalOpen(false)}>
+          <div className="modal-content glass-panel" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Add New Item</h2>
+              <button className="icon-btn" onClick={() => setIsAddModalOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} onSubmit={(e) => e.preventDefault()}>
+              <div className="form-group">
+                <label>Category</label>
+                <select className="form-select">
+                  <option value="warranty">Warranty</option>
+                  <option value="subscription">Subscription</option>
+                  <option value="document">Personal Document</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Title</label>
+                <input type="text" className="form-input" placeholder="e.g. MacBook Pro, Netflix, Passport" />
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Cost / Monthly</label>
+                  <input type="number" className="form-input" placeholder="0.00" />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Expiration / Renewal Date</label>
+                  <input type="date" className="form-input" />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Notes</label>
+                <textarea className="form-textarea" rows={3} placeholder="Add any specific details here..."></textarea>
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Save Item</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
