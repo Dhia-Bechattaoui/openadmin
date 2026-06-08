@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { 
   ShieldCheck, 
@@ -12,9 +12,70 @@ import {
 } from "lucide-react";
 import "./App.css";
 
+interface Item {
+  id?: number;
+  title: string;
+  category: string;
+  expiration_date: string | null;
+  cost: number | null;
+  notes: string | null;
+  created_at?: string;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [items, setItems] = useState<Item[]>([]);
+
+  // Form State
+  const [category, setCategory] = useState("warranty");
+  const [title, setTitle] = useState("");
+  const [cost, setCost] = useState("");
+  const [expirationDate, setExpirationDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const fetchItems = async () => {
+    try {
+      const fetchedItems: Item[] = await invoke("get_items");
+      setItems(fetchedItems);
+    } catch (e) {
+      console.error("Failed to fetch items:", e);
+    }
+  };
+
+  // Load items on initial mount
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const handleSaveItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return;
+
+    try {
+      const newItem: Item = {
+        title,
+        category,
+        cost: cost ? parseFloat(cost) : null,
+        expiration_date: expirationDate || null,
+        notes: notes || null
+      };
+
+      await invoke("insert_item", { item: newItem });
+      
+      // Reset form and close modal
+      setTitle("");
+      setCost("");
+      setExpirationDate("");
+      setNotes("");
+      setIsAddModalOpen(false);
+      
+      // Refresh the dashboard with the newly saved item
+      fetchItems();
+    } catch (e) {
+      console.error("Failed to save item:", e);
+    }
+  };
 
   return (
     <div className="app-container">
@@ -77,40 +138,32 @@ function App() {
           </div>
         </header>
 
-        {/* Dashboard Grid */}
+        {/* Dashboard Grid rendering real items from SQLite */}
         <div className="dashboard-grid">
-          <div className="card glass-panel">
-            <div className="card-header">
-              <h3>Active Warranties</h3>
-              <div className="card-icon" style={{ color: '#10b981' }}>
-                <Receipt size={24} />
+          {items.map(item => (
+            <div className="card glass-panel" key={item.id}>
+              <div className="card-header">
+                <h3>{item.title}</h3>
+                <div className="card-icon" style={{ 
+                  color: item.category === 'warranty' ? '#10b981' : 
+                         item.category === 'subscription' ? '#6366f1' : '#f59e0b' 
+                }}>
+                  {item.category === 'warranty' && <Receipt size={24} />}
+                  {item.category === 'subscription' && <CreditCard size={24} />}
+                  {item.category === 'document' && <ShieldCheck size={24} />}
+                </div>
               </div>
+              {item.cost && <h1 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>${item.cost.toFixed(2)}</h1>}
+              {item.expiration_date && <p>Expires: {item.expiration_date}</p>}
+              {item.notes && <p style={{fontSize: '0.875rem', opacity: 0.7, marginTop: 'auto'}}>{item.notes}</p>}
             </div>
-            <h1>12</h1>
-            <p>2 expiring within 30 days</p>
-          </div>
-
-          <div className="card glass-panel">
-            <div className="card-header">
-              <h3>Subscriptions</h3>
-              <div className="card-icon" style={{ color: '#6366f1' }}>
-                <CreditCard size={24} />
-              </div>
-            </div>
-            <h1>$145<span style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>/mo</span></h1>
-            <p>1 free trial active</p>
-          </div>
-
-          <div className="card glass-panel">
-            <div className="card-header">
-              <h3>Documents</h3>
-              <div className="card-icon" style={{ color: '#f59e0b' }}>
-                <ShieldCheck size={24} />
-              </div>
-            </div>
-            <h1>4</h1>
-            <p>Passport expires in 8 months</p>
-          </div>
+          ))}
+          
+          {items.length === 0 && (
+            <p style={{ gridColumn: '1 / -1', textAlign: 'center', opacity: 0.5, marginTop: '4rem' }}>
+              No items yet. Click "Add Item" to get started!
+            </p>
+          )}
         </div>
       </main>
 
@@ -125,10 +178,10 @@ function App() {
               </button>
             </div>
             
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} onSubmit={(e) => e.preventDefault()}>
+            <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} onSubmit={handleSaveItem}>
               <div className="form-group">
                 <label>Category</label>
-                <select className="form-select">
+                <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
                   <option value="warranty">Warranty</option>
                   <option value="subscription">Subscription</option>
                   <option value="document">Personal Document</option>
@@ -137,23 +190,48 @@ function App() {
 
               <div className="form-group">
                 <label>Title</label>
-                <input type="text" className="form-input" placeholder="e.g. MacBook Pro, Netflix, Passport" />
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  required 
+                  value={title} 
+                  onChange={e => setTitle(e.target.value)} 
+                  placeholder="e.g. MacBook Pro, Netflix, Passport" 
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <div className="form-group" style={{ flex: 1 }}>
                   <label>Cost / Monthly</label>
-                  <input type="number" className="form-input" placeholder="0.00" />
+                  <input 
+                    type="number" 
+                    step="0.01" 
+                    className="form-input" 
+                    value={cost} 
+                    onChange={e => setCost(e.target.value)} 
+                    placeholder="0.00" 
+                  />
                 </div>
                 <div className="form-group" style={{ flex: 1 }}>
                   <label>Expiration / Renewal Date</label>
-                  <input type="date" className="form-input" />
+                  <input 
+                    type="date" 
+                    className="form-input" 
+                    value={expirationDate} 
+                    onChange={e => setExpirationDate(e.target.value)} 
+                  />
                 </div>
               </div>
 
               <div className="form-group">
                 <label>Notes</label>
-                <textarea className="form-textarea" rows={3} placeholder="Add any specific details here..."></textarea>
+                <textarea 
+                  className="form-textarea" 
+                  rows={3} 
+                  value={notes} 
+                  onChange={e => setNotes(e.target.value)} 
+                  placeholder="Add any specific details here..."
+                ></textarea>
               </div>
 
               <div className="form-actions">

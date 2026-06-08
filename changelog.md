@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] - 2026-06-08
+### Added
+- Wired React "Add Item" form to the Tauri backend for SQLite persistence.
+- Connected dashboard UI to automatically fetch and render saved items from the local database on load.
+
 ## [0.0.5] - 2026-06-08
 ### Added
 - Implemented Rust backend database operations for items (`insert_item`, `get_items`).
@@ -33,7 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.2...v0.0.3
