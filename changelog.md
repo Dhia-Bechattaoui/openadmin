@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-08
+### Added
+- Created a background Rust worker thread to periodically check the SQLite database for expiring warranties and subscriptions.
+- Integrated `tauri-plugin-notification` to trigger native Mac OS push notifications for items nearing expiration.
+- Final UI polish: added smooth scale and shadow hover animations to dashboard glass cards.
+
 ## [0.0.7] - 2026-06-08
 ### Added
 - Integrated Tesseract.js (WebAssembly) for offline, local receipt OCR.
@@ -43,7 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.7...v0.1.0
 [0.0.7]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.0.4...v0.0.5

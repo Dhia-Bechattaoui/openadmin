@@ -22,12 +22,44 @@ fn get_items(state: State<AppState>) -> Result<Vec<Item>, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             use tauri::Manager;
+            use std::time::Duration;
+            use std::thread;
+            use tauri_plugin_notification::NotificationExt;
+
             // Get the secure application data directory
             if let Ok(app_data_dir) = app.path().app_data_dir() {
                 // Initialize the embedded SQLite database
                 let conn = db::init_db(&app_data_dir).expect("Failed to initialize database");
+                
+                // Clone path for the background worker
+                let worker_db_path = app_data_dir.clone();
+                let app_handle = app.handle().clone();
+
+                // Spawn background worker thread for expiration checks
+                thread::spawn(move || {
+                    // Give the app a moment to start up
+                    thread::sleep(Duration::from_secs(5));
+                    
+                    if let Ok(worker_conn) = db::init_db(&worker_db_path) {
+                        if let Ok(items) = db::get_items(&worker_conn) {
+                            // Basic check logic: for demo, just notify if ANY items exist
+                            // In reality, this would parse `expiration_date` and check if it's within 30 days
+                            let expiring_items = items.iter().filter(|i| i.expiration_date.is_some()).count();
+                            
+                            if expiring_items > 0 {
+                                let _ = app_handle.notification()
+                                    .builder()
+                                    .title("OpenAdmin Alert")
+                                    .body(format!("You have {} items that may need attention soon.", expiring_items))
+                                    .show();
+                            }
+                        }
+                    }
+                });
+
                 app.manage(AppState {
                     db_conn: Mutex::new(conn),
                 });
