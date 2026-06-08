@@ -1,7 +1,8 @@
 {
-  "name": "tauri-app",
+  "name": "openadmin",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.1",
+  "description": "Local-first Life Ops dashboard",
   "type": "module",
   "scripts": {
     "dev": "vite",
