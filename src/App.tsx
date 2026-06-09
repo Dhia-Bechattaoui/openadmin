@@ -97,7 +97,7 @@ function App() {
         filters: [{ name: "JSON", extensions: ["json"] }]
       });
       if (filePath) {
-        await writeTextFile(filePath, jsonStr);
+        await invoke("save_export_file", { path: filePath, data: jsonStr });
         await message("Data exported successfully!", { title: "Success", kind: "info" });
       }
     } catch (err) {

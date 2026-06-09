@@ -56,6 +56,11 @@ fn export_data(state: State<AppState>) -> Result<String, String> {
     serde_json::to_string(&items).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn save_export_file(path: String, data: String) -> Result<(), String> {
+    std::fs::write(path, data).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -124,7 +129,8 @@ pub fn run() {
             get_settings,
             update_settings,
             wipe_database,
-            export_data
+            export_data,
+            save_export_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

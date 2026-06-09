@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-09
+### Added
+- Created the Settings configuration page.
+- Added Data Export functionality with native file dialog to save SQLite database as a JSON backup.
+- Added Database Wipe functionality with native confirmation protections.
+- Added Push Notification toggle to enable/disable background OS alerts.
+- Set up an automated GitHub Actions CI/CD pipeline to cross-compile and publish Windows `.msi` and macOS `.dmg` releases automatically.
+### Fixed
+- Bypassed strict frontend filesystem sandbox by securely routing file exports through the Rust backend.
+
 ## [0.2.2] - 2026-06-08
 ### Changed
 - Updated `productName` in `tauri.conf.json` from `tauri-app` to `OpenAdmin` to ensure compiled `.dmg` binaries use the correct branding.
@@ -71,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.1.1...v0.2.0
