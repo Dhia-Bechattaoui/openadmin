@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-06-09
+### Fixed
+- Re-triggered release pipeline to ensure APPLE_TEAM_ID secret is properly picked up by GitHub Actions.
+
 ## [0.5.0] - 2026-06-09
 ### Fixed
 - Fixed GitHub Actions failing to notarize macOS release by explicitly passing APPLE_TEAM_ID.
