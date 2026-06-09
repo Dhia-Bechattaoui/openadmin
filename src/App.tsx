@@ -11,11 +11,11 @@ import {
   X,
   UploadCloud,
   Pencil,
-  Trash
+  Trash,
+  FileText
 } from "lucide-react";
 import Tesseract from "tesseract.js";
 import { save, confirm, message } from '@tauri-apps/plugin-dialog';
-import { writeTextFile } from '@tauri-apps/plugin-fs';
 import "./App.css";
 
 interface SettingsData {
@@ -172,6 +172,15 @@ function App() {
     setIsAddModalOpen(false);
   };
 
+  const openAddModal = () => {
+    resetForm();
+    if (activeTab === 'warranties') setCategory('warranty');
+    else if (activeTab === 'subscriptions') setCategory('subscription');
+    else if (activeTab === 'documents') setCategory('document');
+    else setCategory('warranty');
+    setIsAddModalOpen(true);
+  };
+
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -229,6 +238,13 @@ function App() {
             <CreditCard size={20} />
             <span>Subscriptions</span>
           </div>
+          <div 
+            className={`nav-item ${activeTab === 'documents' ? 'active' : ''}`}
+            onClick={() => setActiveTab('documents')}
+          >
+            <FileText size={20} />
+            <span>Documents</span>
+          </div>
           <div style={{ flex: 1 }}></div>
           <div 
             className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
@@ -248,12 +264,14 @@ function App() {
               {activeTab === 'dashboard' && 'Life Ops Overview'}
               {activeTab === 'warranties' && 'Warranties'}
               {activeTab === 'subscriptions' && 'Subscriptions'}
+              {activeTab === 'documents' && 'Documents'}
               {activeTab === 'settings' && 'Settings'}
             </h1>
             <p>
               {activeTab === 'dashboard' && 'Your local-first command center.'}
               {activeTab === 'warranties' && 'Track and manage your product warranties.'}
               {activeTab === 'subscriptions' && 'Keep an eye on your recurring costs.'}
+              {activeTab === 'documents' && 'Monitor your personal documents and IDs.'}
               {activeTab === 'settings' && 'Configure your OpenAdmin preferences.'}
             </p>
           </div>
@@ -262,7 +280,7 @@ function App() {
             <button className="nav-item" style={{ padding: '0.75rem', borderRadius: '50%' }}>
               <Bell size={20} />
             </button>
-            <button className="btn-primary" onClick={() => { resetForm(); setIsAddModalOpen(true); }}>
+            <button className="btn-primary" onClick={openAddModal}>
               <Plus size={20} />
               Add Item
             </button>
@@ -276,6 +294,7 @@ function App() {
               .filter(item => {
                 if (activeTab === 'warranties') return item.category === 'warranty';
                 if (activeTab === 'subscriptions') return item.category === 'subscription';
+                if (activeTab === 'documents') return item.category === 'document';
                 return true; // Dashboard shows all
               })
               .map(item => (
@@ -310,10 +329,11 @@ function App() {
             {items.filter(item => {
               if (activeTab === 'warranties') return item.category === 'warranty';
               if (activeTab === 'subscriptions') return item.category === 'subscription';
+              if (activeTab === 'documents') return item.category === 'document';
               return true;
             }).length === 0 && (
               <p style={{ gridColumn: '1 / -1', textAlign: 'center', opacity: 0.5, marginTop: '4rem' }}>
-                No items found here. Click "Add Item" to get started!
+                No items found here. Click <span style={{ textDecoration: 'underline', cursor: 'pointer', color: '#3b82f6' }} onClick={openAddModal}>Add Item</span> to get started!
               </p>
             )}
           </div>

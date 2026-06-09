@@ -93,10 +93,19 @@ pub fn run() {
                         });
                         if settings.notifications_enabled {
                             if let Ok(items) = db::get_items(&worker_conn) {
-                                // Basic check logic: for demo, just notify if ANY items exist
-                                // In reality, this would parse `expiration_date` and check if it's within 30 days
-                                let expiring_items =
-                                    items.iter().filter(|i| i.expiration_date.is_some()).count();
+                                let today = chrono::Utc::now().naive_utc().date();
+                                let mut expiring_items = 0;
+                                
+                                for item in items.iter() {
+                                    if let Some(date_str) = &item.expiration_date {
+                                        if let Ok(exp_date) = chrono::NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+                                            let days_until = (exp_date - today).num_days();
+                                            if days_until >= 0 && days_until <= 30 {
+                                                expiring_items += 1;
+                                            }
+                                        }
+                                    }
+                                }
 
                                 if expiring_items > 0 {
                                     let _ = app_handle

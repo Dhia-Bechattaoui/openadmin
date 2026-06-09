@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-09
+### Added
+- Created the "Documents" tab on the sidebar to properly view and manage personal documents.
+- Improved UX: Clicking "Add Item" now auto-selects the category corresponding to your current active tab.
+- Finalized background notification logic: The Rust worker now parses `expiration_date` and strictly triggers native OS alerts only for items expiring within the next 30 days.
+
 ## [0.3.0] - 2026-06-09
 ### Added
 - Created the Settings configuration page.
@@ -81,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project directory structure created.
 - Implementation plan finalized.
 
-[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/dhia-bechattaoui/openadmin/compare/v0.2.0...v0.2.1
