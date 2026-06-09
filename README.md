@@ -1,6 +1,8 @@
-# OpenAdmin
-
-The privacy-first "Life Ops" Dashboard.
+<div align="center">
+  <img src="src-tauri/icons/128x128.png" alt="OpenAdmin Icon" width="128" height="128" />
+  <h1>OpenAdmin</h1>
+  <p><em>The privacy-first "Life Ops" Dashboard.</em></p>
+</div>
 
 OpenAdmin is a local-first application designed to manage personal operations (warranties, subscriptions, expiring passports) without ever sending sensitive data to the cloud.
 
