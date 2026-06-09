@@ -14,7 +14,13 @@ import {
   Trash
 } from "lucide-react";
 import Tesseract from "tesseract.js";
+import { save, confirm, message } from '@tauri-apps/plugin-dialog';
+import { writeTextFile } from '@tauri-apps/plugin-fs';
 import "./App.css";
+
+interface SettingsData {
+  notifications_enabled: boolean;
+}
 
 interface Item {
   id?: number;
@@ -52,9 +58,52 @@ function App() {
     }
   };
 
+  const [settings, setSettings] = useState<SettingsData>({ notifications_enabled: true });
+
   useEffect(() => {
     fetchItems();
+    invoke<SettingsData>("get_settings").then(setSettings).catch(console.error);
   }, []);
+
+  const toggleNotifications = async () => {
+    const newSettings = { notifications_enabled: !settings.notifications_enabled };
+    try {
+      await invoke("update_settings", { settings: newSettings });
+      setSettings(newSettings);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleWipeDatabase = async () => {
+    const yes = await confirm("Are you sure you want to delete all data? This cannot be undone.", { title: "Wipe Database", kind: "warning" });
+    if (yes) {
+      try {
+        await invoke("wipe_database");
+        setItems([]);
+        await message("Database wiped successfully.", { title: "Success", kind: "info" });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const handleExportData = async () => {
+    try {
+      const jsonStr = await invoke<string>("export_data");
+      const filePath = await save({
+        title: "Export OpenAdmin Data",
+        defaultPath: "openadmin_backup.json",
+        filters: [{ name: "JSON", extensions: ["json"] }]
+      });
+      if (filePath) {
+        await writeTextFile(filePath, jsonStr);
+        await message("Data exported successfully!", { title: "Success", kind: "info" });
+      }
+    } catch (err) {
+      console.error("Export failed", err);
+    }
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,11 +152,14 @@ function App() {
   };
 
   const handleDelete = async (id: number) => {
-    try {
-      await invoke("delete_item", { id });
-      fetchItems();
-    } catch (e) {
-      console.error("Failed to delete item:", e);
+    const yes = await confirm("Are you sure you want to delete this item?", { title: "Delete Item", kind: "warning" });
+    if (yes) {
+      try {
+        await invoke("delete_item", { id });
+        fetchItems();
+      } catch (e) {
+        console.error("Failed to delete item:", e);
+      }
     }
   };
 
@@ -267,8 +319,50 @@ function App() {
           </div>
         ) : (
           <div className="settings-panel glass-panel" style={{ padding: '2rem', marginTop: '2rem', borderRadius: '16px' }}>
-            <h2>Preferences</h2>
-            <p style={{ opacity: 0.7, marginTop: '1rem' }}>Settings configuration coming soon...</p>
+            <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Preferences</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>Push Notifications</h3>
+                <p style={{ opacity: 0.7, fontSize: '0.9rem', margin: 0 }}>Receive desktop alerts for expiring items</p>
+              </div>
+              <button 
+                onClick={toggleNotifications}
+                style={{
+                  width: '50px', height: '26px', borderRadius: '13px', border: 'none',
+                  backgroundColor: settings.notifications_enabled ? '#3b82f6' : '#374151',
+                  position: 'relative', cursor: 'pointer', transition: 'all 0.3s'
+                }}
+              >
+                <div style={{
+                  width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'white',
+                  position: 'absolute', top: '3px', left: settings.notifications_enabled ? '27px' : '3px',
+                  transition: 'all 0.3s'
+                }} />
+              </button>
+            </div>
+
+            <h2 style={{ fontSize: '1.5rem', marginTop: '2rem', marginBottom: '1.5rem' }}>Data Management</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>Export Backup</h3>
+                  <p style={{ opacity: 0.7, fontSize: '0.9rem', margin: 0 }}>Save all your items to a local JSON file</p>
+                </div>
+                <button onClick={handleExportData} className="primary-btn" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', padding: '0.5rem 1rem' }}>
+                  Export Data
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: '#ef4444' }}>Danger Zone</h3>
+                  <p style={{ opacity: 0.7, fontSize: '0.9rem', margin: 0 }}>Permanently delete all your local data</p>
+                </div>
+                <button onClick={handleWipeDatabase} className="primary-btn" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', padding: '0.5rem 1rem' }}>
+                  Wipe Database
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </main>
