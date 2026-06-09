@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-09
+### Fixed
+- Fixed GitHub Actions failing to notarize macOS release by explicitly passing APPLE_TEAM_ID.
+
 ## [0.4.1] - 2026-06-09
 ### Added
 - Replaced default app icons with custom premium OpenAdmin icons across all platforms.
