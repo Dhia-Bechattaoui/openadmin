@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-06-09
+### Added
+- Replaced default app icons with custom premium OpenAdmin icons across all platforms.
+- Added beautiful UI screenshot to README.md.
+
+### Fixed
+- Fixed an issue where the "Add Item" modal would get cut off on smaller screens without a scrollbar.
+- Configured GitHub Actions to automatically securely sign and notarize the macOS `.dmg` release to pass Apple Gatekeeper checks.
 ## [0.4.0] - 2026-06-09
 ### Added
 - Created the "Documents" tab on the sidebar to properly view and manage personal documents.
