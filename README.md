@@ -2,6 +2,8 @@
   <img src="src-tauri/icons/128x128.png" alt="OpenAdmin Icon" width="128" height="128" />
   <h1>OpenAdmin</h1>
   <p><em>The privacy-first "Life Ops" Dashboard.</em></p>
+  <br />
+  <img src="screenshot.png" alt="OpenAdmin Dashboard Screenshot" width="800" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" />
 </div>
 
 OpenAdmin is a local-first application designed to manage personal operations (warranties, subscriptions, expiring passports) without ever sending sensitive data to the cloud.
